@@ -112,3 +112,20 @@ def checkCfipsFunc(df):
 
 checkCfipsFunc(checkCfips)
 
+#Let's convert the dataset by transposing it w.r.t. "cfips"
+def convertData(df,cfips):
+    newDf=pd.DataFrame()
+    newDf.index=df[df.cfips==1001]["first_day_of_month"].copy()
+    df.index=df["first_day_of_month"].copy()
+    func=lambda x: x
+    for cfip in cfips:
+        try:
+            newDf[str(cfip)]=df[df.cfips==cfip]["microbusiness_density"].copy()#
+        except Exception as e:
+            print(e)#For 2020, it does not accept column because it confuse with index 2020 values.
+            newDf[str(cfip)+"a"]=df[df.cfips==cfip]["microbusiness_density"].copy()
+    return newDf
+cfips=list(checkCfips["trainCfips"])
+dfTrainTrans=convertData(dfTrain.copy(),cfips)
+dfTrainTrans.head(10)
+
