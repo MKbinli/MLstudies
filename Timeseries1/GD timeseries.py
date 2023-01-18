@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 import re
 import warnings
+import statsmodels.tsa.stattools as sts
+
 warnings.filterwarnings('ignore')
 sns.set()
 
@@ -73,4 +75,40 @@ dfTest=dfTest.drop(columns=columnsToRemoveTest)
 print(dfTrain.head(10))
 print(dfTest.tail(10))
 
+#See the features 
+dfTrain.columns
+
+dfTrain.info()
+
+
+dfTest.info()
+
+pd.options.display.max_columns = 4000
+pd.options.display.max_rows = 4000
+
+oneStateFreq=dfTrain["cfips"].value_counts().iloc[0]
+
+checkFunc=lambda x: 0 if x==oneStateFreq else 1
+
+#All states have same amount of information inside the train dataset
+dfTrain["cfips"].value_counts().apply(checkFunc).sum()
+
+oneStateFreq=dfTest["cfips"].value_counts().iloc[0]
+
+#All states have same amount of information inside the test set
+dfTest["cfips"].value_counts().apply(checkFunc).sum()
+
+
+#Check whether "cfips" of the train set and test set are the same
+checkCfips=pd.DataFrame(columns=["trainCfips","testCfips"])
+checkCfips["trainCfips"]=dfTrain["cfips"].value_counts().index.sort_values()
+checkCfips["testCfips"]=dfTest["cfips"].value_counts().index.sort_values()
+def checkCfipsFunc(df):
+    if df["trainCfips"].equals(df["testCfips"]):
+        print("We checked the equality of cfips values w.r.t. train and test set")
+        return True
+    else:
+        return False
+
+checkCfipsFunc(checkCfips)
 
