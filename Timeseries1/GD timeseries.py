@@ -3,9 +3,10 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import statsmodels.tsa.stattools as sts 
+import statsmodels.graphics.tsaplots as sgt
 import re
 import warnings
-import statsmodels.tsa.stattools as sts
 
 warnings.filterwarnings('ignore')
 sns.set()
@@ -129,3 +130,13 @@ cfips=list(checkCfips["trainCfips"])
 dfTrainTrans=convertData(dfTrain.copy(),cfips)
 dfTrainTrans.head(10)
 
+#An example for stationary test that shows 1001 is non-stationary
+sts.adfuller(dfTrainTrans["1001"])
+
+sgt.plot_acf(dfTrainTrans["1001"], lags=30, zero = False)
+plt.title("ACF 1001", size=24)
+plt.show()
+
+sgt.plot_pacf(dfTrainTrans["1001"], lags = 30, zero = False, method = ('ols'))
+plt.title("PACF 1001", size=24)
+plt.show()
